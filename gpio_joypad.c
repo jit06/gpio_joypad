@@ -7,67 +7,10 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 
-// 10 ms = 100 event per sec. Should be enought for 60 fps games
-#define LOOP_DELAY 10
+#include <fcntl.h>
+#include <unistd.h>
 
-#define PORT_ADC   1   // saradc_ch1
-#define ADC_SW_1   21  // gpio pin for switch 1 
-#define ADC_SW_2   22  // gpio pin for switch 2
-
-#define ADC_THRESHOLD 8
-#define ADC_MID_MARGIN 20
-
-#define	ADC_HAT0X_MAX 600
-#define ADC_HAT0X_MIN 120
-#define ADC_HAT0X_FLA 353
-
-#define	ADC_HAT0Y_MAX 620
-#define ADC_HAT0Y_MIN 120
-#define ADC_HAT0Y_FLA 358
-
-#define	ADC_HAT1X_MAX 600
-#define ADC_HAT1X_MIN 120
-#define ADC_HAT1X_FLA 345
-
-#define	ADC_HAT1Y_MAX 650
-#define ADC_HAT1Y_MIN 120
-#define ADC_HAT1Y_FLA 375
-
-#define ANALOG_MAX 32767
-#define ANALOG_MID 0
-#define ANALOG_MIN -32767
-
-struct {
-	int pin;       // GPIO Pin (wiring pi)
-	int key;       // key to bind to
-	int status;    // current status : 1 = released, 0 = pressed
-	int initial;   // initial pin status (should always be 1)
-        int activeVal; // value to set when active
-        int clicked;   // track a clicked event to handle special combos
-	int eventType; // EV_KEY or EV_ABS
-} io[] = {
-	{  3	, BTN_DPAD_UP   , 1 , 1 , 1 , 0, EV_KEY  }, // UP
-        {  3	, ABS_HAT0Y     , 1 , 1 , -1, 0, EV_ABS  }, // UP
-	{  0	, BTN_DPAD_DOWN , 1 , 1 , 1 , 0, EV_KEY  }, // DOWN
-        {  0	, ABS_HAT0Y     , 1 , 1 , 1 , 0, EV_ABS  }, // DOWN
-	{ 23	, BTN_DPAD_LEFT , 1 , 1 , 1 , 0, EV_KEY  }, // LEFT
-        { 23	, ABS_HAT0X     , 1 , 1 , -1, 0, EV_ABS  }, // LEFT
-	{  2	, BTN_DPAD_RIGHT, 1 , 1 , 1 , 0, EV_KEY  }, // RIGHT
-        {  2	, ABS_HAT0X     , 1 , 1 , 1 , 0, EV_ABS  }, // RIGHT
-	{ 14	, BTN_X         , 1 , 1 , 1 , 0, EV_KEY  }, // X
-	{ 11	, BTN_A         , 1 , 1 , 1 , 0, EV_KEY  }, // A
-	{  6	, BTN_B         , 1 , 1 , 1 , 0, EV_KEY  }, // B
-	{ 26	, BTN_Y         , 1 , 1 , 1 , 0, EV_KEY  }, // Y
-	{  5	, BTN_TL        , 1 , 1 , 1 , 0, EV_KEY  }, // L1
-	{  7	, BTN_TL2       , 1 , 1 , 1 , 0, EV_KEY  }, // L2
-	{ 12	, BTN_TR        , 1 , 1 , 1 , 0, EV_KEY  }, // R1
-	{  1	, BTN_TR2       , 1 , 1 , 1 , 0, EV_KEY  }, // R2
-	{ 10	, BTN_START     , 1 , 1 , 1 , 0, EV_KEY  }, // START
-	{  4	, BTN_SELECT    , 1 , 1 , 1 , 0, EV_KEY  }, // SELET
-	{ 24	, KEY_VOLUMEUP  , 1 , 1 , 1 , 0, EV_KEY  }, // Vol up
-	{ 27	, KEY_VOLUMEDOWN, 1 , 1 , 1 , 0, EV_KEY  }, // Vol down
-	{ -1	, -1            ,- 1,-1 , 1 , 0, EV_KEY  }  // DO NOT REMOVE
-};
+#include "gpio_joypad.h"
 
 int Running = 1;
 int UinputFd = -1;
