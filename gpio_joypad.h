@@ -2,7 +2,7 @@
 #define GPIO_JOYPAD_H
 
 // 10 ms = 100 event per sec. Should be enought for 60 fps games
-#define LOOP_DELAY 10
+#define LOOP_DELAY 500
 
 #define PORT_ADC   1   // saradc_ch1
 #define ADC_SW_1   21  // gpio pin for switch 1 
@@ -72,6 +72,11 @@ int sendAnalog(int sw1, int sw2, int *adc, int *lastadc, int evt, int hatlow, in
 int translateAnalog(int value, int threshhold, int hatlow, int hatmid, int hatmax, int reverse);
 int adcRead(int sw1, int sw2);
 void handleVolume();
+void openDisplaySettingsFiles();
+void saveDisplaySettings();
+void handleDisplaySettings();
+void stdMessage(char *message);
+void writeToSysfs(char *sysfs, int value);
 void init(void);
 
 #endif

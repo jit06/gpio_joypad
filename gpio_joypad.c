@@ -10,21 +10,36 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <signal.h>
+
 #include "gpio_joypad.h"
 
 int Running = 1;
 int UinputFd = -1;
 int SoundMuted = 0;
+int currentContrast = 0;
+int currentBrightness = 0;
 struct uinput_user_dev UiJoypad;
 struct input_event ev;
+FILE *displayBrightness = NULL;
+FILE *displayContrast = NULL;
 
+
+void stdMessage(char *message) {
+    printf("gpio-joypad : %s\n", message);
+}
 
 void cleanUp(void) {
 
+    stdMessage("cleaning up before closing...");
+    
     if (UinputFd >= 0 ) {
         ioctl(UinputFd, UI_DEV_DESTROY);    // remove custom uinput joypad;
         close(UinputFd);
     }
+    
+    saveDisplaySettings();
+    stdMessage("done !");
 }
 
 // Quick-n-dirty error reporter; print message, clean up and exit.
@@ -36,6 +51,7 @@ void err(char *msg) {
 
 // Interrupt handler -- set global flag to abort main loop.
 void signalHandler(int n) {
+    stdMessage("interrupted !");
     Running = 0;
 }
 
@@ -116,8 +132,99 @@ void handleVolume() {
 }
 
 
+void openDisplaySettingsFiles() {
+    stdMessage("Search for existing setting..."); 
+    displayContrast     = fopen("/media/boot/contrast"  , "r");
+    displayBrightness   = fopen("/media/boot/brightness", "r");
+   
+    if (displayContrast) {
+        stdMessage("found contast setting");
+        fscanf(displayContrast,"%d",&currentContrast);
+        fclose(displayContrast);
+    }
+    
+    if (displayBrightness) {
+        stdMessage("found brightness setting");
+        fscanf(displayBrightness,"%d ",&currentBrightness);
+        fclose(displayBrightness);
+    }
+}
+
+
+void saveDisplaySettings() {
+
+    stdMessage("save settings");
+    displayBrightness   = fopen("/media/boot/brightness", "w");
+    displayContrast     = fopen("/media/boot/contrast"  , "w");
+    
+    if (displayContrast) {
+        fprintf(displayContrast, "%d", currentContrast);
+        fclose(displayContrast);
+    }
+    
+    if (displayBrightness) {
+        fprintf(displayBrightness, "%d",currentBrightness);
+        fclose(displayBrightness);
+    }
+}
+
+
+void writeToSysfs(char *sysfs, int value) {
+    FILE *ptr=NULL;
+    ptr = fopen(sysfs, "w");
+    
+    if(ptr) {
+        fprintf(ptr, "%d\n", value);
+        fclose(ptr);
+    }
+}
+
+
+void handleDisplaySettings() {
+    
+    // start + up => brightness +
+    if(io[16].clicked == 1 && io[0].clicked == 1) {
+        currentBrightness+=10;
+        io[0].clicked=0;
+        if(currentBrightness >= 250) currentBrightness = 250;
+        
+        writeToSysfs("/sys/class/video/vpp_brightness",currentBrightness);
+    }
+    
+    // start + down => brightness -
+    if(io[16].clicked == 1 && io[2].clicked == 1) {
+        currentBrightness-=10;
+        io[2].clicked=0;
+        if(currentBrightness <= -250) currentBrightness = -250;
+        
+        writeToSysfs("/sys/class/video/vpp_brightness",currentBrightness);
+    }
+
+
+    // start + right => contrast +
+    if(io[16].clicked == 1 && io[6].clicked == 1) {
+        currentContrast+=10;
+        io[6].clicked=0;
+        if(currentContrast >= 250) currentContrast = 250;
+        
+        writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);  
+    }
+    
+    // start + left => contrast -
+    if(io[16].clicked == 1 && io[4].clicked == 1) {
+        currentContrast-=10;
+        io[4].clicked=0;
+        if(currentContrast <= 250) currentContrast = -250;
+        
+        writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
+    }    
+}
+
+
 void init(void) {
     int i=0;
+
+    signal(SIGINT, signalHandler); 
 
     // init uinput
     UinputFd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -188,6 +295,8 @@ void init(void) {
 
     if(write(UinputFd, &UiJoypad, sizeof(UiJoypad)) < 0) err("writing to uinput failed");
     if(ioctl(UinputFd, UI_DEV_CREATE) < 0) err("ioctl failed to create device");
+    
+    openDisplaySettingsFiles();
 }
 
 
@@ -224,6 +333,7 @@ int main (void)
         }
 
         handleVolume();
+        handleDisplaySettings();
 
         // handle analog stick
         if(sendAnalog(1,0,&adcx1,&last_adcx1,ABS_X,ADC_HAT0X_MIN, ADC_HAT0X_FLA, ADC_HAT0X_MAX,1))  change = 1;
