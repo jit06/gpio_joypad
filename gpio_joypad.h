@@ -57,7 +57,7 @@ struct {
 	{ 12	, BTN_TR        , 1 , 1 , 1 , 0, EV_KEY  }, // R1
 	{  1	, BTN_TR2       , 1 , 1 , 1 , 0, EV_KEY  }, // R2
 	{ 10	, BTN_START     , 1 , 1 , 1 , 0, EV_KEY  }, // START
-	{  4	, BTN_SELECT    , 1 , 1 , 1 , 0, EV_KEY  }, // SELET
+	{  4	, BTN_SELECT    , 1 , 1 , 1 , 0, EV_KEY  }, // SELECT
 	{ 24	, KEY_VOLUMEUP  , 1 , 1 , 1 , 0, EV_KEY  }, // Vol up
 	{ 27	, KEY_VOLUMEDOWN, 1 , 1 , 1 , 0, EV_KEY  }, // Vol down
 	{ -1	, -1            ,- 1,-1 , 1 , 0, EV_KEY  }  // DO NOT REMOVE
