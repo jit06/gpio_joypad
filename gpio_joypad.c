@@ -183,7 +183,7 @@ void writeToSysfs(char *sysfs, int value) {
 void handleDisplaySettings() {
     
     // start + up => brightness +
-    if(io[16].clicked == 1 && io[0].clicked == 1) {
+    if(io[16].status == 0 && io[0].clicked == 1) {
         currentBrightness+=10;
         io[0].clicked=0;
         if(currentBrightness >= 250) currentBrightness = 250;
@@ -192,7 +192,7 @@ void handleDisplaySettings() {
     }
     
     // start + down => brightness -
-    if(io[16].clicked == 1 && io[2].clicked == 1) {
+    if(io[16].status == 0 && io[2].clicked == 1) {
         currentBrightness-=10;
         io[2].clicked=0;
         if(currentBrightness <= -250) currentBrightness = -250;
@@ -202,16 +202,16 @@ void handleDisplaySettings() {
 
 
     // start + right => contrast +
-    if(io[16].clicked == 1 && io[6].clicked == 1) {
+    if(io[16].status == 0 && io[6].clicked == 1) {
         currentContrast+=10;
         io[6].clicked=0;
         if(currentContrast >= 250) currentContrast = 250;
         
-        writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);  
+        writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
     }
     
     // start + left => contrast -
-    if(io[16].clicked == 1 && io[4].clicked == 1) {
+    if(io[16].status == 0 && io[4].clicked == 1) {
         currentContrast-=10;
         io[4].clicked=0;
         if(currentContrast <= 250) currentContrast = -250;
@@ -316,7 +316,7 @@ int main (void)
 
             if(digitalRead(io[i].pin)!=io[i].initial && io[i].status == io[i].initial) {
 //                printf("Pressed key=%i (pin %i) value = %i!\n", io[i].key, io[i].pin, io[i].activeVal);
-		sendEvent(io[i].eventType, io[i].key, io[i].activeVal);
+		        sendEvent(io[i].eventType, io[i].key, io[i].activeVal);
                 io[i].status = 0;   // ... mean value 0 for gpio pin
                 io[i].clicked = 1;
                 change=1;
