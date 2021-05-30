@@ -182,40 +182,48 @@ void writeToSysfs(char *sysfs, int value) {
 
 void handleDisplaySettings() {
     
+    // do nothing if start button is not pressed
+    if(io[12].status != 0) return;
+    
     // start + up => brightness +
-    if(io[12].status == 0 && io[0].clicked == 1) {
+    if(io[0].clicked == 1) {
         currentBrightness+=10;
         io[0].clicked=0;
         if(currentBrightness >= 250) currentBrightness = 250;
         
         writeToSysfs("/sys/class/video/vpp_brightness",currentBrightness);
+        return;
     }
     
     // start + down => brightness -
-    if(io[12].status == 0 && io[1].clicked == 1) {
+    if(io[1].clicked == 1) {
         currentBrightness-=10;
         io[1].clicked=0;
         if(currentBrightness <= -250) currentBrightness = -250;
+        
         writeToSysfs("/sys/class/video/vpp_brightness",currentBrightness);
+        return;
     }
 
-
     // start + right => contrast +
-    if(io[12].status == 0 && io[3].clicked == 1) {
+    if(io[3].clicked == 1) {
         currentContrast+=10;
         io[3].clicked=0;
         if(currentContrast >= 120) currentContrast = 120;
+
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
+        return;
     }
     
     // start + left => contrast -
-    if(io[16].status == 0 && io[2].clicked == 1) {
+    if(io[12].status == 0 && io[2].clicked == 1) {
         currentContrast-=10;
         io[2].clicked=0;
         if(currentContrast <= -120) currentContrast = -120;
         
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
-    }    
+        return;
+    }
 }
 
 
