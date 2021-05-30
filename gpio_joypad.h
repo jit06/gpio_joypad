@@ -1,14 +1,13 @@
 #ifndef GPIO_JOYPAD_H
 #define GPIO_JOYPAD_H
 
-// 10 ms = 100 event per sec. Should be enought for 60 fps games
-#define LOOP_DELAY 500
+#define LOOP_DELAY 12  // delay between two gpio polling
 
 #define PORT_ADC   1   // saradc_ch1
 #define ADC_SW_1   21  // gpio pin for switch 1 
 #define ADC_SW_2   22  // gpio pin for switch 2
 
-#define ADC_THRESHOLD 8
+#define ADC_THRESHOLD 8     // do not consider any anylog change bwlo this threshold
 #define ADC_MID_MARGIN 20
 
 #define	ADC_HAT0X_MAX 600
@@ -41,13 +40,9 @@ struct {
 	int eventType; // EV_KEY or EV_ABS
 } io[] = {
 	{  3	, BTN_DPAD_UP   , 1 , 1 , 1 , 0, EV_KEY  }, // UP
-    {  3	, ABS_HAT0Y     , 1 , 1 , -1, 0, EV_ABS  }, // UP
 	{  0	, BTN_DPAD_DOWN , 1 , 1 , 1 , 0, EV_KEY  }, // DOWN
-    {  0	, ABS_HAT0Y     , 1 , 1 , 1 , 0, EV_ABS  }, // DOWN
 	{ 23	, BTN_DPAD_LEFT , 1 , 1 , 1 , 0, EV_KEY  }, // LEFT
-    { 23	, ABS_HAT0X     , 1 , 1 , -1, 0, EV_ABS  }, // LEFT
 	{  2	, BTN_DPAD_RIGHT, 1 , 1 , 1 , 0, EV_KEY  }, // RIGHT
-    {  2	, ABS_HAT0X     , 1 , 1 , 1 , 0, EV_ABS  }, // RIGHT
 	{ 14	, BTN_X         , 1 , 1 , 1 , 0, EV_KEY  }, // X
 	{ 11	, BTN_A         , 1 , 1 , 1 , 0, EV_KEY  }, // A
 	{  6	, BTN_B         , 1 , 1 , 1 , 0, EV_KEY  }, // B

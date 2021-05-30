@@ -120,14 +120,14 @@ int adcRead(int sw1, int sw2) {
 
 void handleVolume() {
     // volup (18) => up volume with amixer
-    if(io[18].clicked == 1) {
+    if(io[14].clicked == 1) {
         system("/usr/bin/amixer -c 1 -q set Master 1%+;/usr/bin/amixer -c 1 -q set Speaker 1%+");
-        io[18].clicked = 0;
+        io[14].clicked = 0;
     }
     // voldown (19) => down volume with amixer
-    if(io[19].clicked == 1) {
+    if(io[15].clicked == 1) {
         system("/usr/bin/amixer -c 1 -q set Master 1%-;/usr/bin/amixer -c 1 -q set Speaker 1%-");
-        io[19].clicked = 0;
+        io[15].clicked = 0;
     }
 }
 
@@ -183,7 +183,7 @@ void writeToSysfs(char *sysfs, int value) {
 void handleDisplaySettings() {
     
     // start + up => brightness +
-    if(io[16].status == 0 && io[0].clicked == 1) {
+    if(io[12].status == 0 && io[0].clicked == 1) {
         currentBrightness+=10;
         io[0].clicked=0;
         if(currentBrightness >= 250) currentBrightness = 250;
@@ -192,29 +192,27 @@ void handleDisplaySettings() {
     }
     
     // start + down => brightness -
-    if(io[16].status == 0 && io[2].clicked == 1) {
+    if(io[12].status == 0 && io[1].clicked == 1) {
         currentBrightness-=10;
-        io[2].clicked=0;
+        io[1].clicked=0;
         if(currentBrightness <= -250) currentBrightness = -250;
-        
         writeToSysfs("/sys/class/video/vpp_brightness",currentBrightness);
     }
 
 
     // start + right => contrast +
-    if(io[16].status == 0 && io[6].clicked == 1) {
+    if(io[12].status == 0 && io[3].clicked == 1) {
         currentContrast+=10;
-        io[6].clicked=0;
-        if(currentContrast >= 250) currentContrast = 250;
-        
+        io[3].clicked=0;
+        if(currentContrast >= 120) currentContrast = 120;
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
     }
     
     // start + left => contrast -
-    if(io[16].status == 0 && io[4].clicked == 1) {
+    if(io[16].status == 0 && io[2].clicked == 1) {
         currentContrast-=10;
-        io[4].clicked=0;
-        if(currentContrast <= 250) currentContrast = -250;
+        io[2].clicked=0;
+        if(currentContrast <= -120) currentContrast = -120;
         
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
     }    
@@ -249,9 +247,9 @@ void init(void) {
 
         //printf("enabled pin %i => read = %i\n", io[i].pin, digitalRead(io[i].pin));
 
-         if(io[i].key != ABS_HAT0X || io[i].key != ABS_HAT0Y)
-	     if(ioctl(UinputFd, UI_SET_KEYBIT, io[i].key) <0 )   // enable used uinput key 
-                 err("ioctl failed to enable key");
+        // if(io[i].key != ABS_HAT0X || io[i].key != ABS_HAT0Y)
+	    if(ioctl(UinputFd, UI_SET_KEYBIT, io[i].key) <0 )   // enable used uinput key 
+            err("ioctl failed to enable key");
 
         i++;
     }
@@ -313,9 +311,9 @@ int main (void)
 
         // handle joypad buttons
         while( io[i].pin >= 0 ) {
-
+            
             if(digitalRead(io[i].pin)!=io[i].initial && io[i].status == io[i].initial) {
-//                printf("Pressed key=%i (pin %i) value = %i!\n", io[i].key, io[i].pin, io[i].activeVal);
+                printf("Pressed key=%i (pin %i) value = %i!\n", io[i].key, io[i].pin, io[i].activeVal);
 		        sendEvent(io[i].eventType, io[i].key, io[i].activeVal);
                 io[i].status = 0;   // ... mean value 0 for gpio pin
                 io[i].clicked = 1;
@@ -323,12 +321,12 @@ int main (void)
             }
 
             if(digitalRead(io[i].pin)==io[i].initial && io[i].status != io[i].initial) {
-//                printf("Released %i (%i)!\n", io[i].key, io[i].pin);
+                printf("Released %i (%i)!\n", io[i].key, io[i].pin);
                 sendEvent(io[i].eventType, io[i].key, 0);
                 change=1;
                 io[i].status = 1;   // ... mean value 1 for gpio pin
             }
-
+       
             i++;
         }
 
