@@ -18,4 +18,7 @@ Value are saved in /media/boot/contrast and /media/boot/brightness
 How to compile:
 gcc -O2 -o gpio_joypad gpio_joypad.c -lwiringPi -lpthread -lm -lrt -lcrypt
 
-Below are GPOI wiring plan and MC14051B schema. You can adapt gpio_joypad.h for a different wiring. 
+Below are GPOI wiring plan and MC14051B schema. You can adapt gpio_joypad.h for a different wiring.
+
+![Wiring plan](https://github.com/jit06/gpio_joypad/raw/master/gpio_joypad_wiring.png)
+![MC14051B schema](https://github.com/jit06/gpio_joypad/raw/master/MC14051B.jpg) 
