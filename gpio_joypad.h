@@ -7,8 +7,8 @@
 #define ADC_SW_1   21  // gpio pin for switch 1 
 #define ADC_SW_2   22  // gpio pin for switch 2
 
-#define ADC_THRESHOLD 8     // do not consider any anylog change bwlo this threshold
-#define ADC_MID_MARGIN 20
+#define ADC_THRESHOLD 8     // 8 do not consider any anylog change bwlo this threshold
+#define ADC_MID_MARGIN 20 // 20
 
 #define	ADC_HAT0X_MAX 600
 #define ADC_HAT0X_MIN 120

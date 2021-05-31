@@ -78,7 +78,7 @@ int sendAnalog(int sw1, int sw2, int *adc, int *lastadc, int evt, int hatlow, in
         sendEvent(EV_ABS, evt, state);
 //	printf("analog %i %i: %i\n",sw1,sw2, *adc);
 //	printf("transl %i %i: %i\n",sw1,sw2, state);
-	return 1;
+	    return 1;
     } else {
         return 0;
     }
@@ -239,14 +239,14 @@ void init(void) {
     }
 
     // gamepad
-    if(ioctl(UinputFd, UI_SET_EVBIT, EV_KEY)     <0 ) err("ioctl enable key failed"); // activate key press / realease
+    if(ioctl(UinputFd, UI_SET_EVBIT, EV_KEY)     <0 ) err("ioctl enable key failed"); // activate key press / release
     if(ioctl(UinputFd, UI_SET_EVBIT, EV_ABS)     <0 ) err("ioctl enable abs failed"); // activate absolute axis
     if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_X)     <0 ) err("ioctl enable X1 axis failed"); // activate analog X1 axis
     if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_Y)     <0 ) err("ioctl enable Y1 axis failed"); // activate analog Y1 axis
     if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_RX)    <0 ) err("ioctl enable X2 axis failed"); // activate analog X2 axis
     if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_RY)    <0 ) err("ioctl enable Y2 axis failed"); // activate analog Y2 axis
-    if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_HAT0X) <0 ) err("ioctl enable HAT0X axis failed");
-    if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_HAT0Y) <0 ) err("ioctl enable HAT0Y axis failed");
+    //if(ioctl(UinputFd, UI_SET_ABSBIT, ) <0 ) err("ioctl enable HAT0X axis failed");
+    //if(ioctl(UinputFd, UI_SET_ABSBIT, ABS_HAT0Y) <0 ) err("ioctl enable HAT0Y axis failed");
 
     // set-up gpio pin & used uinput codefor gamepad
     while( io[i].pin >= 0 ) {
@@ -286,13 +286,13 @@ void init(void) {
     UiJoypad.absmin[ABS_RY] = ANALOG_MIN;
     UiJoypad.absflat[ABS_RY] = ANALOG_MID;
 
-    UiJoypad.absmax[ABS_HAT0X] = 1;
-    UiJoypad.absmin[ABS_HAT0X] = -1;
-    UiJoypad.absflat[ABS_HAT0X] = 0;
+    //UiJoypad.absmax[ABS_HAT0X] = 1;
+    //UiJoypad.absmin[ABS_HAT0X] = -1;
+    //UiJoypad.absflat[ABS_HAT0X] = 0;
 
-    UiJoypad.absmax[ABS_HAT0Y] = 1;
-    UiJoypad.absmin[ABS_HAT0Y] = -1;
-    UiJoypad.absflat[ABS_HAT0Y] = 0;
+    //UiJoypad.absmax[ABS_HAT0Y] = 1;
+    //UiJoypad.absmin[ABS_HAT0Y] = -1;
+    //UiJoypad.absflat[ABS_HAT0Y] = 0;
 
     UiJoypad.id.bustype = BUS_USB;
     UiJoypad.id.vendor  = 0x1;
@@ -342,10 +342,10 @@ int main (void)
         handleDisplaySettings();
 
         // handle analog stick
-        if(sendAnalog(1,0,&adcx1,&last_adcx1,ABS_X,ADC_HAT0X_MIN, ADC_HAT0X_FLA, ADC_HAT0X_MAX,1))  change = 1;
-        if(sendAnalog(0,1,&adcy1,&last_adcy1,ABS_Y,ADC_HAT0Y_MIN, ADC_HAT0Y_FLA, ADC_HAT0Y_MAX,1))  change = 1;
-        if(sendAnalog(0,0,&adcx2,&last_adcx2,ABS_RX,ADC_HAT1X_MIN, ADC_HAT1X_FLA, ADC_HAT1X_MAX,1)) change = 1;
-        if(sendAnalog(1,1,&adcy2,&last_adcy2,ABS_RY,ADC_HAT1Y_MIN, ADC_HAT1Y_FLA, ADC_HAT1Y_MAX,1)) change = 1;
+        if(sendAnalog(1,0,&adcx1,&last_adcx1,ABS_X ,ADC_HAT0X_MIN, ADC_HAT0X_FLA, ADC_HAT0X_MAX,1))  change = 1;
+       // if(sendAnalog(0,1,&adcy1,&last_adcy1,ABS_Y ,ADC_HAT0Y_MIN, ADC_HAT0Y_FLA, ADC_HAT0Y_MAX,1))  change = 1;
+       // if(sendAnalog(0,0,&adcx2,&last_adcx2,ABS_RX,ADC_HAT1X_MIN, ADC_HAT1X_FLA, ADC_HAT1X_MAX,1)) change = 1;
+       // if(sendAnalog(1,1,&adcy2,&last_adcy2,ABS_RY,ADC_HAT1Y_MIN, ADC_HAT1Y_FLA, ADC_HAT1Y_MAX,1)) change = 1;
 
         if(change == 1) {
             //printf("Status changed => SYN !\n");
