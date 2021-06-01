@@ -219,7 +219,7 @@ void handleDisplaySettings() {
     if(io[12].status == 0 && io[2].clicked == 1) {
         currentContrast-=5;
         io[2].clicked=0;
-        if(currentContrast <= -125) currentContrast = -125;
+        if(currentContrast <= -125) currentContrast = -125 ;
         
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
         return;
