@@ -187,7 +187,7 @@ void handleDisplaySettings() {
     
     // start + up => brightness +
     if(io[0].clicked == 1) {
-        currentBrightness+=10;
+        currentBrightness+=5;
         io[0].clicked=0;
         if(currentBrightness >= 250) currentBrightness = 250;
         
@@ -197,7 +197,7 @@ void handleDisplaySettings() {
     
     // start + down => brightness -
     if(io[1].clicked == 1) {
-        currentBrightness-=10;
+        currentBrightness-=5;
         io[1].clicked=0;
         if(currentBrightness <= -250) currentBrightness = -250;
         
@@ -207,9 +207,9 @@ void handleDisplaySettings() {
 
     // start + right => contrast +
     if(io[3].clicked == 1) {
-        currentContrast+=10;
+        currentContrast+=5;
         io[3].clicked=0;
-        if(currentContrast >= 120) currentContrast = 120;
+        if(currentContrast >= 125) currentContrast = 125;
 
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
         return;
@@ -217,9 +217,9 @@ void handleDisplaySettings() {
     
     // start + left => contrast -
     if(io[12].status == 0 && io[2].clicked == 1) {
-        currentContrast-=10;
+        currentContrast-=5;
         io[2].clicked=0;
-        if(currentContrast <= -120) currentContrast = -120;
+        if(currentContrast <= -125) currentContrast = -125;
         
         writeToSysfs("/sys/class/video/vpp_contrast",currentContrast);
         return;
@@ -321,7 +321,7 @@ int main (void)
         while( io[i].pin >= 0 ) {
             
             if(digitalRead(io[i].pin)!=io[i].initial && io[i].status == io[i].initial) {
-                printf("Pressed key=%i (pin %i) value = %i!\n", io[i].key, io[i].pin, io[i].activeVal);
+                //printf("Pressed key=%i (pin %i) value = %i!\n", io[i].key, io[i].pin, io[i].activeVal);
 		        sendEvent(io[i].eventType, io[i].key, io[i].activeVal);
                 io[i].status = 0;   // ... mean value 0 for gpio pin
                 io[i].clicked = 1;
@@ -329,7 +329,7 @@ int main (void)
             }
 
             if(digitalRead(io[i].pin)==io[i].initial && io[i].status != io[i].initial) {
-                printf("Released %i (%i)!\n", io[i].key, io[i].pin);
+                //printf("Released %i (%i)!\n", io[i].key, io[i].pin);
                 sendEvent(io[i].eventType, io[i].key, 0);
                 change=1;
                 io[i].status = 1;   // ... mean value 1 for gpio pin
@@ -343,9 +343,9 @@ int main (void)
 
         // handle analog stick
         if(sendAnalog(1,0,&adcx1,&last_adcx1,ABS_X ,ADC_HAT0X_MIN, ADC_HAT0X_FLA, ADC_HAT0X_MAX,1))  change = 1;
-       // if(sendAnalog(0,1,&adcy1,&last_adcy1,ABS_Y ,ADC_HAT0Y_MIN, ADC_HAT0Y_FLA, ADC_HAT0Y_MAX,1))  change = 1;
-       // if(sendAnalog(0,0,&adcx2,&last_adcx2,ABS_RX,ADC_HAT1X_MIN, ADC_HAT1X_FLA, ADC_HAT1X_MAX,1)) change = 1;
-       // if(sendAnalog(1,1,&adcy2,&last_adcy2,ABS_RY,ADC_HAT1Y_MIN, ADC_HAT1Y_FLA, ADC_HAT1Y_MAX,1)) change = 1;
+        if(sendAnalog(0,1,&adcy1,&last_adcy1,ABS_Y ,ADC_HAT0Y_MIN, ADC_HAT0Y_FLA, ADC_HAT0Y_MAX,1))  change = 1;
+        if(sendAnalog(0,0,&adcx2,&last_adcx2,ABS_RX,ADC_HAT1X_MIN, ADC_HAT1X_FLA, ADC_HAT1X_MAX,1)) change = 1;
+        if(sendAnalog(1,1,&adcy2,&last_adcy2,ABS_RY,ADC_HAT1Y_MIN, ADC_HAT1Y_FLA, ADC_HAT1Y_MAX,1)) change = 1;
 
         if(change == 1) {
             //printf("Status changed => SYN !\n");

@@ -7,24 +7,24 @@
 #define ADC_SW_1   21  // gpio pin for switch 1 
 #define ADC_SW_2   22  // gpio pin for switch 2
 
-#define ADC_THRESHOLD 8     // 8 do not consider any anylog change bwlo this threshold
-#define ADC_MID_MARGIN 20 // 20
+#define ADC_THRESHOLD 8     // 8 do not consider any anylog change below this threshold
+#define ADC_MID_MARGIN 40   // distance from FLA value that is consideered as middle
 
-#define	ADC_HAT0X_MAX 600
-#define ADC_HAT0X_MIN 120
-#define ADC_HAT0X_FLA 353
+#define	ADC_HAT0X_MAX 534
+#define ADC_HAT0X_MIN 106
+#define ADC_HAT0X_FLA 327
 
-#define	ADC_HAT0Y_MAX 620
-#define ADC_HAT0Y_MIN 120
-#define ADC_HAT0Y_FLA 358
+#define	ADC_HAT0Y_MAX 600
+#define ADC_HAT0Y_MIN 123
+#define ADC_HAT0Y_FLA 341
 
-#define	ADC_HAT1X_MAX 600
-#define ADC_HAT1X_MIN 120
-#define ADC_HAT1X_FLA 345
+#define	ADC_HAT1X_MAX 400
+#define ADC_HAT1X_MIN 90
+#define ADC_HAT1X_FLA 145
 
-#define	ADC_HAT1Y_MAX 650
-#define ADC_HAT1Y_MIN 120
-#define ADC_HAT1Y_FLA 375
+#define	ADC_HAT1Y_MAX 560
+#define ADC_HAT1Y_MIN 20
+#define ADC_HAT1Y_FLA 240
 
 #define ANALOG_MAX 32767
 #define ANALOG_MID 0
